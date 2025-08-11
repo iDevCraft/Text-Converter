@@ -126,6 +126,8 @@ class _FetchFileState extends State<FetchFile> {
                           "Extract",
                           style: GoogleFonts.inter(
                             fontSize: 16.sp,
+                            color: Colors.white,
+
                             fontWeight: FontWeight.w700,
                           ),
                         ),

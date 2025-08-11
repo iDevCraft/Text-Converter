@@ -82,7 +82,7 @@ Future<void> customBottomSheet({required BuildContext context}) {
                   selectedImages = files; // images update hoti rahengi
                 },
               ),
-              const Pdfscreen(),
+              const PdfScreen(),
             ],
           ),
         ),
