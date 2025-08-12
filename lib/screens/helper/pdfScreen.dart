@@ -13,6 +13,7 @@ class PdfScreen extends StatefulWidget {
 class _PdfScreenState extends State<PdfScreen> {
   List<File> pdfFiles = [];
   bool isLoading = true;
+  bool permissionDenied = false;
 
   @override
   void initState() {
@@ -21,34 +22,58 @@ class _PdfScreenState extends State<PdfScreen> {
   }
 
   Future<void> _checkPermissionAndLoadPdfs() async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      status = await Permission.storage.request();
+    bool granted = false;
+    setState(() {
+      isLoading = true;
+      permissionDenied = false;
+    });
+
+    if (Platform.isAndroid) {
+      try {
+        // Try Android 11+ permission
+        granted = await Permission.manageExternalStorage.isGranted;
+        if (!granted) {
+          var status = await Permission.manageExternalStorage.request();
+          granted = status.isGranted;
+        }
+      } catch (e) {
+        // Fallback for Android 10 or below
+        granted = await Permission.storage.isGranted;
+        if (!granted) {
+          var status = await Permission.storage.request();
+          granted = status.isGranted;
+        }
+      }
+    } else {
+      granted = true; // Non-Android platforms
     }
 
-    if (status.isGranted) {
+    if (granted) {
       await _loadPdfFiles();
     } else {
-      setState(() => isLoading = false); // No dialog, just stop loading
+      setState(() {
+        permissionDenied = true;
+        isLoading = false;
+      });
     }
   }
 
   Future<void> _loadPdfFiles() async {
-    setState(() {
-      isLoading = true;
-      pdfFiles.clear();
-    });
+    pdfFiles.clear();
 
     final Directory rootDir = Directory('/storage/emulated/0/');
 
     try {
-      await for (var entity in rootDir.list(recursive: true)) {
+      await for (var entity in rootDir.list(
+        recursive: true,
+        followLinks: false,
+      )) {
         if (entity is File && entity.path.toLowerCase().endsWith('.pdf')) {
           pdfFiles.add(entity);
         }
       }
     } catch (e) {
-      debugPrint("Error: $e");
+      debugPrint("Error scanning files: $e");
     }
 
     setState(() {
@@ -70,10 +95,28 @@ class _PdfScreenState extends State<PdfScreen> {
       backgroundColor: const Color(0xFF2b2b2b),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
+          : permissionDenied
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Storage permission is required to find PDF files",
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: _checkPermissionAndLoadPdfs,
+                    child: const Text("Grant Permission"),
+                  ),
+                ],
+              ),
+            )
           : pdfFiles.isEmpty
           ? const Center(
               child: Text(
-                "No PDF files found or permission denied",
+                "No PDF files found",
                 style: TextStyle(color: Colors.white),
               ),
             )
@@ -97,7 +140,7 @@ class _PdfScreenState extends State<PdfScreen> {
                       style: const TextStyle(color: Colors.grey),
                     ),
                     onTap: () {
-                      // PDF open karne ka code yaha add karna hai
+                      // PDF open karne ka code yaha add karo
                     },
                   );
                 },
