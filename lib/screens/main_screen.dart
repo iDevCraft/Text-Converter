@@ -38,7 +38,16 @@ class _MainScreenState extends State<MainScreen> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) {
+                //       return Resultpage();
+                //     },
+                //   ),
+                // );
+              },
               icon: Icon(Icons.more_vert, color: Colors.white),
             ),
           ],
@@ -50,7 +59,7 @@ class _MainScreenState extends State<MainScreen> {
               Text(
                 "TO EXTRACT TEXT FROM\nPDF FILES & IMAGES ",
                 style: GoogleFonts.inter(
-                  fontSize: 18.sp,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.w800,
                   color: Color(0xFF8d8c8c),
                 ),
@@ -68,22 +77,19 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   );
                 },
-                child: SizedBox(
-                  child: Column(
-                    children: [
-                      Image.asset(txt_converter, scale: 6.sp),
-                      SizedBox(height: 1.h),
-                      Text(
-                        "CONVERT TO\nTXT",
-                        style: GoogleFonts.inter(
-                          fontSize: 14.sp,
-
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
+                child: Column(
+                  children: [
+                    Image.asset(txt_converter, scale: 6.sp),
+                    SizedBox(height: 1.h),
+                    Text(
+                      "EXTRACT\nTEXT",
+                      style: GoogleFonts.inter(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w700,
                       ),
-                    ],
-                  ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
             ],

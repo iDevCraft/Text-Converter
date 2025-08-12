@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/helper/string_images.dart';
+import 'package:text_converter/screens/resultpage.dart';
 
 class FetchFile extends StatefulWidget {
   final List<Uint8List> selectedFiles;
@@ -119,7 +120,18 @@ class _FetchFileState extends State<FetchFile> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return Resultpage(images: widget.selectedFiles);
+                            },
+                          ),
+                        );
+                      });
+                    },
                     child: Row(
                       children: [
                         Text(
@@ -127,7 +139,6 @@ class _FetchFileState extends State<FetchFile> {
                           style: GoogleFonts.inter(
                             fontSize: 16.sp,
                             color: Colors.white,
-
                             fontWeight: FontWeight.w700,
                           ),
                         ),

@@ -15,6 +15,7 @@
 
     <!-- For Android 11+ (API 30+) all files access -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    
 
     <!-- Queries for MANAGE_EXTERNAL_STORAGE dialog -->
     <queries>

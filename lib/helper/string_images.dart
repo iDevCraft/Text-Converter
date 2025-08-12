@@ -7,8 +7,10 @@ String importFile = "assets/image/import_file.png";
 String importFileFirst = "assets/image/import_file_fist.png";
 String tick = "assets/image/tick.png";
 String convert = "assets/image/convert_vector.png";
+String copytext = "assets/image/copytext_ventor.png";
 
 // Colors
 
 Color lightGrey = const Color(0xFF2b2b2b);
 Color grey = const Color(0xFF959595);
+Color blue = const Color(0xFF1a5abb);

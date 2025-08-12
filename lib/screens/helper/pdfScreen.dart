@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:external_path/external_path.dart';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({super.key});
@@ -29,18 +31,21 @@ class _PdfScreenState extends State<PdfScreen> {
     });
 
     if (Platform.isAndroid) {
-      try {
-        // Try Android 11+ permission
-        granted = await Permission.manageExternalStorage.isGranted;
-        if (!granted) {
-          var status = await Permission.manageExternalStorage.request();
-          granted = status.isGranted;
-        }
-      } catch (e) {
-        // Fallback for Android 10 or below
+      final deviceInfo = DeviceInfoPlugin();
+      final androidInfo = await deviceInfo.androidInfo;
+
+      if (androidInfo.version.sdkInt < 30) {
+        // Android 10 and below
         granted = await Permission.storage.isGranted;
         if (!granted) {
           var status = await Permission.storage.request();
+          granted = status.isGranted;
+        }
+      } else {
+        // Android 11 and above
+        granted = await Permission.manageExternalStorage.isGranted;
+        if (!granted) {
+          var status = await Permission.manageExternalStorage.request();
           granted = status.isGranted;
         }
       }
@@ -60,17 +65,13 @@ class _PdfScreenState extends State<PdfScreen> {
 
   Future<void> _loadPdfFiles() async {
     pdfFiles.clear();
-
-    final Directory rootDir = Directory('/storage/emulated/0/');
-
     try {
-      await for (var entity in rootDir.list(
-        recursive: true,
-        followLinks: false,
-      )) {
-        if (entity is File && entity.path.toLowerCase().endsWith('.pdf')) {
-          pdfFiles.add(entity);
-        }
+      List<String> storagePaths =
+          await ExternalPath.getExternalStorageDirectories() ?? [];
+
+      // Scan each available storage directory
+      for (String path in storagePaths) {
+        await _getFiles(path);
       }
     } catch (e) {
       debugPrint("Error scanning files: $e");
@@ -79,6 +80,30 @@ class _PdfScreenState extends State<PdfScreen> {
     setState(() {
       isLoading = false;
     });
+  }
+
+  Future<void> _getFiles(String directoryPath) async {
+    try {
+      final rootDir = Directory(directoryPath);
+
+      await for (var entity in rootDir.list(recursive: false)) {
+        if (entity is File) {
+          if (entity.path.toLowerCase().endsWith('.pdf')) {
+            pdfFiles.add(entity);
+          }
+        } else if (entity is Directory) {
+          // Skip restricted folders
+          String folderName = entity.path.split('/').last.toLowerCase();
+          if (folderName != 'android' &&
+              folderName != 'data' &&
+              folderName != 'obb') {
+            await _getFiles(entity.path);
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error accessing $directoryPath: $e");
+    }
   }
 
   String formatBytes(int bytes) {
