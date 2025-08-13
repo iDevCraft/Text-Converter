@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -92,35 +91,69 @@ class _ResultpageState extends State<Resultpage> {
                       ),
                       child: Column(
                         children: [
-                          Expanded(
-                            child: widget.extractedText.trim().isEmpty
-                                ? Center(
-                                    child: Text(
-                                      "No text detected",
-                                      style: GoogleFonts.inter(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 2.h, bottom: 1.h),
+                                child: DefaultTabController(
+                                  length: 2,
+                                  child: TabBar(
+                                    indicatorSize: TabBarIndicatorSize.label,
+                                    // labelPadding: EdgeInsets.only(left: 5.w),
+                                    indicatorColor: Color(0xff9f9f9f),
+                                    labelStyle: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                  )
-                                : SingleChildScrollView(
-                                    child: Text(
-                                      widget.extractedText,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 14.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ),
+                                    isScrollable: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    tabs: [Text("Page By Page"), Text("All")],
                                   ),
+                                ),
+                              ),
+                              Spacer(),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: 2.h,
+                                  right: 7.w,
+                                  bottom: 1.h,
+                                ),
+                                child: Text(
+                                  "01/02 Pages",
+                                  style: GoogleFonts.inter(
+                                    fontSize: 15.sp,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          Expanded(
+                            child: SingleChildScrollView(
+                              padding: EdgeInsets.all(15.sp),
+                              child: Text(
+                                (widget.extractedText.trim().isEmpty)
+                                    ? "No text detected"
+                                    : widget.extractedText,
+                                style: GoogleFonts.inter(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
                     Positioned(
                       left: 30.w,
-                      height: 7.h,
-                      bottom: 2.h,
+                      height: 8.h,
+                      bottom: 1.h,
                       width: 36.w,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
