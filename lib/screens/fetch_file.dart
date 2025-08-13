@@ -1,10 +1,10 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/helper/string_images.dart';
 import 'package:text_converter/screens/resultpage.dart';
+import 'package:text_converter/screens/text_detect/text_detector.dart';
 
 class FetchFile extends StatefulWidget {
   final List<Uint8List> selectedFiles;
@@ -15,64 +15,84 @@ class FetchFile extends StatefulWidget {
 }
 
 class _FetchFileState extends State<FetchFile> {
-  List<dynamic> fetchingFiles = [];
+  bool isExtracting = false; // 🔹 Loading state
+  TextDetectorHelper textDetectorHelper = TextDetectorHelper();
+
+  Future<void> _extractText() async {
+    setState(() {
+      isExtracting = true;
+    });
+
+    try {
+      final result = await textDetectorHelper.getRecognizedText(
+        widget.selectedFiles,
+      );
+
+      print(result); // yahan pe recognized text console me print hoga
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return Resultpage(
+              images: widget.selectedFiles,
+              extractedText: result,
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      print("Error extracting text: $e");
+    } finally {
+      setState(() {
+        isExtracting = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+        title: Row(
+          children: [
+            Image.asset(appbar_image),
+            SizedBox(width: 2.w),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: const Color(0xFF2b2b2b),
+              ),
+              height: 4.h,
+              width: 45.w,
+              child: Row(
                 children: [
-                  Image.asset(appbar_image),
                   SizedBox(width: 2.w),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Color(0xFF2b2b2b),
+                  Text(
+                    "File Imported",
+                    style: GoogleFonts.inter(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
                     ),
-                    height: 4.h,
-                    width: 45.w,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 2.w),
-                          child: Text(
-                            "File Imported",
-                            style: GoogleFonts.inter(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Container(
-                          margin: EdgeInsets.only(right: 2.w),
-                          child: Image.asset(tick),
-                        ),
-                      ],
-                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: EdgeInsets.only(right: 2.w),
+                    child: Image.asset(tick),
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))],
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+        ],
       ),
       body: Container(
         width: double.infinity,
         color: lightGrey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(
               height: 25.h,
@@ -94,11 +114,12 @@ class _FetchFileState extends State<FetchFile> {
                 },
               ),
             ),
-
             Container(
               margin: EdgeInsets.only(top: 20.h),
               child: Text(
-                "Press Button to\nExtract Text",
+                isExtracting
+                    ? "Please Wait..."
+                    : "Press Button to\nExtract Text",
                 style: GoogleFonts.inter(
                   fontSize: 18.sp,
                   color: grey,
@@ -112,30 +133,22 @@ class _FetchFileState extends State<FetchFile> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Container(
-                  margin: EdgeInsets.only(top: 25.h, right: 3.w),
+                  margin: EdgeInsets.only(top: 25.h, right: 5.w),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xff1A5ABB),
+                      backgroundColor: const Color(0xff1A5ABB),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
+                      elevation: 0,
                     ),
                     onPressed: () {
-                      setState(() {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return Resultpage(images: widget.selectedFiles);
-                            },
-                          ),
-                        );
-                      });
+                      _extractText();
                     },
                     child: Row(
                       children: [
                         Text(
-                          "Extract",
+                          isExtracting ? "Extracting" : "Extract",
                           style: GoogleFonts.inter(
                             fontSize: 16.sp,
                             color: Colors.white,
@@ -143,7 +156,16 @@ class _FetchFileState extends State<FetchFile> {
                           ),
                         ),
                         SizedBox(width: 2.w),
-                        Image.asset(convert),
+                        isExtracting
+                            ? SizedBox(
+                                height: 2.h,
+                                width: 2.h,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Image.asset(convert, color: Colors.white),
                       ],
                     ),
                   ),

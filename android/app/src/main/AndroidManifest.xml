@@ -2,8 +2,6 @@
 
     <!-- Android 13+ (API 33) for reading any type of media -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
     <!-- Extra: Needed for PDFs and non-media files (Android 13) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"

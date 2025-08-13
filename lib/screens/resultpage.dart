@@ -7,13 +7,22 @@ import 'package:text_converter/helper/string_images.dart';
 
 class Resultpage extends StatefulWidget {
   final List<Uint8List> images;
-  const Resultpage({super.key, required this.images});
+  final String extractedText;
+  const Resultpage({
+    super.key,
+    required this.images,
+    required this.extractedText,
+  });
 
   @override
   State<Resultpage> createState() => _ResultpageState();
 }
 
 class _ResultpageState extends State<Resultpage> {
+  PageController pageController = PageController();
+
+  int currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,40 +92,27 @@ class _ResultpageState extends State<Resultpage> {
                       ),
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 2.h),
-                                child: DefaultTabController(
-                                  length: 2,
-                                  child: TabBar(
-                                    indicatorSize: TabBarIndicatorSize.label,
-                                    labelPadding: EdgeInsets.only(left: 5.w),
-                                    indicatorColor: Color(0xff9f9f9f),
-                                    labelStyle: GoogleFonts.inter(
-                                      fontSize: 16.sp,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
+                          Expanded(
+                            child: widget.extractedText.trim().isEmpty
+                                ? Center(
+                                    child: Text(
+                                      "No text detected",
+                                      style: GoogleFonts.inter(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                    isScrollable: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    tabs: [Text("Page By Page"), Text("All")],
+                                  )
+                                : SingleChildScrollView(
+                                    child: Text(
+                                      widget.extractedText,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 14.sp,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              Spacer(),
-                              Container(
-                                margin: EdgeInsets.only(top: 2.h, right: 7.w),
-                                child: Text(
-                                  "01/02 Pages",
-                                  style: GoogleFonts.inter(
-                                    fontSize: 15.sp,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
                         ],
                       ),
