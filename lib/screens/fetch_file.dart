@@ -24,11 +24,11 @@ class _FetchFileState extends State<FetchFile> {
     });
 
     try {
-      final result = await textDetectorHelper.getRecognizedText(
+      final resultList = await textDetectorHelper.getRecognizedTexts(
         widget.selectedFiles,
       );
 
-      print(result); // yahan pe recognized text console me print hoga
+      print(resultList);
 
       Navigator.push(
         context,
@@ -36,7 +36,7 @@ class _FetchFileState extends State<FetchFile> {
           builder: (context) {
             return Resultpage(
               images: widget.selectedFiles,
-              extractedText: result,
+              extractedTexts: resultList,
             );
           },
         ),
