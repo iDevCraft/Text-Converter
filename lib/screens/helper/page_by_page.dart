@@ -12,7 +12,7 @@ class _PageByPageState extends State<PageByPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightGreyy,
+      backgroundColor: lightGrey,
       body: Center(child: Text("Page By Page")),
     );
   }
