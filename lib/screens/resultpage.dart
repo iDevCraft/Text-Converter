@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/helper/string_images.dart';
+import 'package:text_converter/screens/helper/all_page.dart';
+import 'package:text_converter/screens/helper/page_by_page.dart';
 
 class Resultpage extends StatefulWidget {
   final List<Uint8List> images;
@@ -21,6 +23,12 @@ class _ResultpageState extends State<Resultpage> {
   PageController pageController = PageController();
 
   int currentIndex = 0;
+  void ontapped(int index) {
+    setState(() {
+      currentIndex = index;
+      pageController.jumpToPage(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,9 +107,10 @@ class _ResultpageState extends State<Resultpage> {
                                 child: DefaultTabController(
                                   length: 2,
                                   child: TabBar(
+                                    onTap: ontapped,
                                     indicatorSize: TabBarIndicatorSize.label,
                                     // labelPadding: EdgeInsets.only(left: 5.w),
-                                    indicatorColor: Color(0xff9f9f9f),
+                                    indicatorColor: lightGreyy,
                                     labelStyle: GoogleFonts.inter(
                                       fontSize: 16.sp,
                                       color: Colors.white,
@@ -133,18 +142,10 @@ class _ResultpageState extends State<Resultpage> {
                           ),
 
                           Expanded(
-                            child: SingleChildScrollView(
-                              padding: EdgeInsets.all(15.sp),
-                              child: Text(
-                                (widget.extractedText.trim().isEmpty)
-                                    ? "No text detected"
-                                    : widget.extractedText,
-                                style: GoogleFonts.inter(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                ),
-                              ),
+                            child: PageView(
+                              physics: NeverScrollableScrollPhysics(),
+                              controller: pageController,
+                              children: [PageByPage(), AllPage()],
                             ),
                           ),
                         ],

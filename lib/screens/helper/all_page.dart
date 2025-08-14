@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:text_converter/helper/string_images.dart';
 
 class AllPage extends StatefulWidget {
   const AllPage({super.key});
@@ -10,6 +11,9 @@ class AllPage extends StatefulWidget {
 class _AllPageState extends State<AllPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      backgroundColor: lightGrey,
+      body: Center(child: Text("All Page")),
+    );
   }
 }

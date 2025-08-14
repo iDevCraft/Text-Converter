@@ -14,3 +14,5 @@ String copytext = "assets/image/copytext_ventor.png";
 Color lightGrey = const Color(0xFF2b2b2b);
 Color grey = const Color(0xFF959595);
 Color blue = const Color(0xFF1a5abb);
+// result page tabbar and pageview
+Color lightGreyy = const Color(0xff9f9f9f);
