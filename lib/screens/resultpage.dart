@@ -94,7 +94,7 @@ class _ResultpageState extends State<Resultpage> {
                       margin: EdgeInsets.only(bottom: 5.h),
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5.sp),
+                        borderRadius: BorderRadius.circular(12.sp),
                         color: Color(0xff404040),
                       ),
                       child: Column(
@@ -110,7 +110,7 @@ class _ResultpageState extends State<Resultpage> {
                                     onTap: ontapped,
                                     indicatorSize: TabBarIndicatorSize.label,
                                     // labelPadding: EdgeInsets.only(left: 5.w),
-                                    indicatorColor: lightGreyy,
+                                    indicatorColor: Colors.white,
                                     labelStyle: GoogleFonts.inter(
                                       fontSize: 16.sp,
                                       color: Colors.white,
