@@ -121,13 +121,12 @@ class _ResultpageState extends State<Resultpage> {
                           Row(
                             children: [
                               Container(
-                                margin: EdgeInsets.only(top: 2.h, bottom: 1.h),
+                                margin: EdgeInsets.only(top: 2.h, bottom: 2.h),
                                 child: DefaultTabController(
                                   length: 2,
                                   child: TabBar(
                                     onTap: onTabTapped,
                                     indicatorSize: TabBarIndicatorSize.label,
-                                    labelPadding: EdgeInsets.only(left: 5.w),
                                     indicatorColor: Color(0xff9f9f9f),
                                     labelStyle: GoogleFonts.inter(
                                       fontSize: 16.sp,
@@ -152,41 +151,50 @@ class _ResultpageState extends State<Resultpage> {
                           ),
 
                           Expanded(
-                            child: PageView(
-                              controller: pageController,
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: [
-                                SingleChildScrollView(
-                                  padding: EdgeInsets.all(3.w),
-                                  child: Text(
-                                    widget.extractedTexts[currentImageIndex]
-                                            .trim()
-                                            .isEmpty
-                                        ? "No text detected"
-                                        : widget
-                                              .extractedTexts[currentImageIndex],
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16.sp,
+                            child: Container(
+                              margin: EdgeInsets.only(bottom: 5.h),
+                              child: PageView(
+                                controller: pageController,
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: [
+                                  SingleChildScrollView(
+                                    padding: EdgeInsets.only(
+                                      left: 3.w,
+                                      right: 3.w,
+                                    ),
+                                    child: Text(
+                                      widget.extractedTexts[currentImageIndex]
+                                              .trim()
+                                              .isEmpty
+                                          ? "No text detected"
+                                          : widget
+                                                .extractedTexts[currentImageIndex],
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.sp,
+                                      ),
                                     ),
                                   ),
-                                ),
 
-                                SingleChildScrollView(
-                                  padding: EdgeInsets.all(3.w),
-                                  child: Text(
-                                    allText.trim().isEmpty
-                                        ? "No text detected"
-                                        : allText,
-                                    style: GoogleFonts.inter(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16.sp,
+                                  SingleChildScrollView(
+                                    padding: EdgeInsets.only(
+                                      left: 3.w,
+                                      right: 3.w,
+                                    ),
+                                    child: Text(
+                                      allText.trim().isEmpty
+                                          ? "No text detected"
+                                          : allText,
+                                      style: GoogleFonts.inter(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16.sp,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],

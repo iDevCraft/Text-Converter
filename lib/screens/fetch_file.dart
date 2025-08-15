@@ -57,7 +57,6 @@ class _FetchFileState extends State<FetchFile> {
           onPressed: () {
             setState(() {
               final text = "You Want to Discard\nImport?";
-
               showDialogBox(context, text);
             });
           },
@@ -97,7 +96,13 @@ class _FetchFileState extends State<FetchFile> {
           ],
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+          PopupMenuButton(
+            color: lightGrey,
+            itemBuilder: (context) => [
+              PopupMenuItem(child: Text("data")),
+              PopupMenuItem(child: Text("data2")),
+            ],
+          ),
         ],
       ),
       body: Container(
@@ -125,26 +130,30 @@ class _FetchFileState extends State<FetchFile> {
                 },
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(top: 20.h),
-              child: Text(
-                isExtracting
-                    ? "Please Wait..."
-                    : "Press Button to\nExtract Text",
-                style: GoogleFonts.inter(
-                  fontSize: 18.sp,
-                  color: grey,
-                  fontWeight: FontWeight.w800,
+
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  isExtracting
+                      ? "Please Wait..."
+                      : "Press Button to\nExtract Text",
+                  style: GoogleFonts.inter(
+                    fontSize: 18.sp,
+                    color: grey,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 25.h, right: 5.w),
+            // Yaha se neeche button ko end me chipkane ka code
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                  margin: EdgeInsets.only(bottom: 7.h, right: 5.w),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff1A5ABB),
@@ -157,6 +166,7 @@ class _FetchFileState extends State<FetchFile> {
                       _extractText();
                     },
                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           isExtracting ? "Extracting" : "Extract",
@@ -181,7 +191,7 @@ class _FetchFileState extends State<FetchFile> {
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
