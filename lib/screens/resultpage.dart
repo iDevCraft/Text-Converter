@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:flutter/services.dart';
 import 'package:text_converter/helper/string_images.dart';
+import 'package:text_converter/widgets/customDialogBox.dart';
 
 class Resultpage extends StatefulWidget {
   final List<Uint8List> images;
@@ -36,11 +37,18 @@ class _ResultpageState extends State<Resultpage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: Image.asset(back),
+        leading: IconButton(
+          onPressed: () {
+            setState(() {
+              showDialogBox(context);
+            });
+          },
+          icon: Image.asset(back),
+        ),
         title: Row(
           children: [
             Image.asset(txt_component, scale: 8.sp),
-            SizedBox(width: 1.w),
+            SizedBox(width: 2.w),
             Text(
               "EXTRACTOR",
               style: GoogleFonts.inter(
@@ -55,7 +63,6 @@ class _ResultpageState extends State<Resultpage> {
         color: const Color(0xff2b2b2b),
         child: Column(
           children: [
-            // Thumbnail List
             SizedBox(
               height: 25.h,
               child: ListView.builder(
@@ -104,25 +111,36 @@ class _ResultpageState extends State<Resultpage> {
                       ),
                       child: Column(
                         children: [
-                          Container(
-                            child: DefaultTabController(
-                              length: 2,
-                              initialIndex: currentTabIndex,
-                              child: TabBar(
-                                onTap: onTabTapped,
-                                indicatorSize: TabBarIndicatorSize.label,
-                                indicatorColor: Colors.white,
-                                labelStyle: GoogleFonts.inter(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500,
+                          Row(
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: 2.h, bottom: 1.h),
+                                child: DefaultTabController(
+                                  length: 2,
+                                  child: TabBar(
+                                    indicatorSize: TabBarIndicatorSize.label,
+                                    labelPadding: EdgeInsets.only(left: 5.w),
+                                    indicatorColor: Color(0xff9f9f9f),
+                                    labelStyle: GoogleFonts.inter(
+                                      fontSize: 16.sp,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    isScrollable: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    tabs: [Text("Page By Page"), Text("All")],
+                                  ),
                                 ),
-                                isScrollable: true,
-                                tabs: [
-                                  Tab(text: "Page By Page"),
-                                  Tab(text: "All"),
-                                ],
                               ),
-                            ),
+                              // Container(
+                              //   margin: EdgeInsets.only(
+                              //     top: 2.h,
+                              //     bottom: 1.h,
+                              //     left: 3.w,
+                              //   ),
+                              //   child: Text("data"),
+                              // ),
+                            ],
                           ),
 
                           Expanded(

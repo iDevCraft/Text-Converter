@@ -39,11 +39,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           actions: [
             IconButton(
-              onPressed: () {
-                setState(() {
-                  showDialogBox(context);
-                });
-              },
+              onPressed: () {},
               icon: Icon(Icons.more_vert, color: Colors.white),
             ),
           ],

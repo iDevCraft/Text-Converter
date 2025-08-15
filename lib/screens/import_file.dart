@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/helper/string_images.dart';
+import 'package:text_converter/widgets/customDialogBox.dart';
 import 'package:text_converter/widgets/custom_bottomsheet.dart';
 
 class ImportFile extends StatefulWidget {
@@ -33,37 +34,40 @@ class _ImportFileState extends State<ImportFile> {
                 children: [
                   Image.asset(appbar_image),
                   SizedBox(width: 2.w),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Color(0xFF2b2b2b),
-                    ),
-                    height: 4.h,
-                    width: 45.w,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Color(0xFF2b2b2b),
+                      ),
+                      height: 4.h,
 
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 2.w),
-                          child: Text(
-                            "Import File First",
-                            style: GoogleFonts.inter(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(left: 2.w),
+                            child: Text(
+                              "Import File First",
+                              style: GoogleFonts.inter(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-                        Spacer(),
-                        IconButton(
-                          onPressed: () async {
-                            setState(() {
-                              customBottomSheet(context: context);
-                            });
-                          },
-                          icon: Icon(Icons.attach_file_rounded),
-                        ),
-                      ],
+                          Spacer(),
+                          IconButton(
+                            onPressed: () async {
+                              setState(() {
+                                customBottomSheet(context: context);
+                              });
+                            },
+                            icon: Icon(Icons.attach_file_rounded),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

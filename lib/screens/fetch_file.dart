@@ -67,29 +67,32 @@ class _FetchFileState extends State<FetchFile> {
           children: [
             Image.asset(appbar_image),
             SizedBox(width: 2.w),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: const Color(0xFF2b2b2b),
-              ),
-              height: 4.h,
-              width: 45.w,
-              child: Row(
-                children: [
-                  SizedBox(width: 2.w),
-                  Text(
-                    "File Imported",
-                    style: GoogleFonts.inter(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
+            Expanded(
+              flex: 1,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: const Color(0xFF2b2b2b),
+                ),
+                height: 4.h,
+
+                child: Row(
+                  children: [
+                    SizedBox(width: 2.w),
+                    Text(
+                      "File Imported",
+                      style: GoogleFonts.inter(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: EdgeInsets.only(right: 2.w),
-                    child: Image.asset(tick),
-                  ),
-                ],
+                    const Spacer(),
+                    Padding(
+                      padding: EdgeInsets.only(right: 2.w),
+                      child: Image.asset(tick),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
