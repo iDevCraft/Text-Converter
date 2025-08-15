@@ -4,17 +4,18 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <!-- Extra: Needed for PDFs and non-media files (Android 13) -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
     <!-- For writing (Android 9 and lower) -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
     <!-- For Android 11+ (API 30+) all files access -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     
-
     <!-- Queries for MANAGE_EXTERNAL_STORAGE dialog -->
     <queries>
         <intent>
@@ -29,7 +30,8 @@
     <application
         android:label="text_converter"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true">
 
         <activity
             android:name=".MainActivity"

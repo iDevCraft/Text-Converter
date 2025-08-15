@@ -11,6 +11,7 @@ Future<void> customBottomSheet({required BuildContext context}) {
   List<Uint8List> selectedImages = [];
 
   return showModalBottomSheet(
+    enableDrag: false,
     useSafeArea: true,
     isScrollControlled: true,
     context: context,
@@ -19,6 +20,7 @@ Future<void> customBottomSheet({required BuildContext context}) {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
+            titleSpacing: -2.w,
             leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -66,6 +68,7 @@ Future<void> customBottomSheet({required BuildContext context}) {
                 fontSize: 16.sp,
               ),
             ),
+
             bottom: TabBar(
               labelColor: Colors.white,
               dividerHeight: 0.1,
@@ -74,7 +77,7 @@ Future<void> customBottomSheet({required BuildContext context}) {
                 fontWeight: FontWeight.w800,
               ),
               indicatorColor: Colors.white,
-              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorSize: TabBarIndicatorSize.label,
               indicatorWeight: 2,
               tabs: const [
                 Tab(text: "Images"),

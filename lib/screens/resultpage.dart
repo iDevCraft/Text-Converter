@@ -37,6 +37,7 @@ class _ResultpageState extends State<Resultpage> {
 
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: -2.w,
         leading: IconButton(
           onPressed: () {
             setState(() {
@@ -82,7 +83,7 @@ class _ResultpageState extends State<Resultpage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: currentImageIndex == index
-                              ? Colors.teal
+                              ? Colors.blue
                               : Colors.transparent,
                           width: 2,
                         ),

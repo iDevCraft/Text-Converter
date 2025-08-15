@@ -52,6 +52,7 @@ class _FetchFileState extends State<FetchFile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0.w,
         leading: IconButton(
           onPressed: () {
             setState(() {

@@ -17,12 +17,11 @@ class _MainScreenState extends State<MainScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 10.h,
           title: Column(
             children: [
               Row(
                 children: [
-                  Image.asset(txt_component, scale: 7.sp),
+                  Image.asset(txt_component, scale: 7.5.sp),
                   SizedBox(width: 2.w),
                   Text(
                     "EXTRACTOR",
@@ -33,57 +32,65 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ],
               ),
-              Divider(),
             ],
           ),
           actions: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.more_vert, color: Colors.white),
+            PopupMenuButton(
+              color: lightGrey,
+              itemBuilder: (context) => [
+                PopupMenuItem(value: 1, child: Text("Option 1")),
+                PopupMenuItem(value: 2, child: Text("Option 2")),
+              ],
+              onSelected: (value) {
+                // Handle menu selection
+              },
             ),
           ],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "TO EXTRACT TEXT FROM\nPDF FILES & IMAGES ",
-                style: GoogleFonts.inter(
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF8d8c8c),
+        body: Container(
+          color: lightGrey,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "TO EXTRACT TEXT FROM\nPDF FILES & IMAGES ",
+                  style: GoogleFonts.inter(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF8d8c8c),
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 2.h),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return ImportFile();
-                      },
-                    ),
-                  );
-                },
-                child: Column(
-                  children: [
-                    Image.asset(txt_converter, scale: 6.sp),
-                    SizedBox(height: 1.h),
-                    Text(
-                      "EXTRACT\nTEXT",
-                      style: GoogleFonts.inter(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w700,
+                SizedBox(height: 2.h),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ImportFile();
+                        },
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Image.asset(txt_converter, scale: 6.sp),
+                      SizedBox(height: 1.h),
+                      Text(
+                        "EXTRACT\nTEXT",
+                        style: GoogleFonts.inter(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
