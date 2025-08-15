@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/helper/string_images.dart';
 import 'package:text_converter/screens/import_file.dart';
-import 'package:text_converter/widgets/customDialogBox.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

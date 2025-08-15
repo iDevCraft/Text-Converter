@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/screens/import_file.dart';
 
-Future<void> showDialogBox(BuildContext context) {
+Future<void> showDialogBox(BuildContext context, String text) {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -21,7 +21,7 @@ Future<void> showDialogBox(BuildContext context) {
           ),
         ),
         content: Text(
-          "You want to discard\nimport?",
+          text,
           style: GoogleFonts.inter(
             fontSize: 16.sp,
             color: Colors.white,

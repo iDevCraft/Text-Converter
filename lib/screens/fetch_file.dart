@@ -16,7 +16,7 @@ class FetchFile extends StatefulWidget {
 }
 
 class _FetchFileState extends State<FetchFile> {
-  bool isExtracting = false; // 🔹 Loading state
+  bool isExtracting = false;
   TextDetectorHelper textDetectorHelper = TextDetectorHelper();
 
   Future<void> _extractText() async {
@@ -28,11 +28,8 @@ class _FetchFileState extends State<FetchFile> {
       final resultList = await textDetectorHelper.getRecognizedTexts(
         widget.selectedFiles,
       );
-
-      print(resultList);
-
       Navigator.push(
-        context,
+        (context),
         MaterialPageRoute(
           builder: (context) {
             return Resultpage(
@@ -58,7 +55,9 @@ class _FetchFileState extends State<FetchFile> {
         leading: IconButton(
           onPressed: () {
             setState(() {
-              showDialogBox(context);
+              final text = "You Want to Discard\nImport?";
+
+              showDialogBox(context, text);
             });
           },
           icon: Image.asset(back),
@@ -75,7 +74,6 @@ class _FetchFileState extends State<FetchFile> {
                   color: const Color(0xFF2b2b2b),
                 ),
                 height: 4.h,
-
                 child: Row(
                   children: [
                     SizedBox(width: 2.w),
@@ -119,7 +117,7 @@ class _FetchFileState extends State<FetchFile> {
                     child: Card(
                       child: Image.memory(
                         widget.selectedFiles[index],
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   );

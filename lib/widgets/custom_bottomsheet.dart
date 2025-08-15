@@ -38,7 +38,7 @@ Future<void> customBottomSheet({required BuildContext context}) {
                         ),
                       );
                     } else {
-                      Navigator.pop(context); // close bottom sheet
+                      Navigator.pop(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(

@@ -40,7 +40,8 @@ class _ResultpageState extends State<Resultpage> {
         leading: IconButton(
           onPressed: () {
             setState(() {
-              showDialogBox(context);
+              final text = "Are You Sure?";
+              showDialogBox(context, text);
             });
           },
           icon: Image.asset(back),
@@ -99,7 +100,12 @@ class _ResultpageState extends State<Resultpage> {
 
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(15.sp),
+                padding: EdgeInsets.only(
+                  top: 15.sp,
+                  left: 15.sp,
+                  right: 15.sp,
+                  bottom: 20.sp,
+                ),
                 child: Stack(
                   children: [
                     Container(
@@ -158,7 +164,11 @@ class _ResultpageState extends State<Resultpage> {
                                         ? "No text detected"
                                         : widget
                                               .extractedTexts[currentImageIndex],
-                                    style: const TextStyle(color: Colors.white),
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16.sp,
+                                    ),
                                   ),
                                 ),
 
@@ -168,7 +178,11 @@ class _ResultpageState extends State<Resultpage> {
                                     allText.trim().isEmpty
                                         ? "No text detected"
                                         : allText,
-                                    style: const TextStyle(color: Colors.white),
+                                    style: GoogleFonts.inter(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16.sp,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -181,7 +195,7 @@ class _ResultpageState extends State<Resultpage> {
                     Positioned(
                       left: 30.w,
                       bottom: 2.h,
-                      width: 36.w,
+                      width: 35.w,
                       height: 7.h,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(

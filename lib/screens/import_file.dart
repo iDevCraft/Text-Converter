@@ -60,6 +60,7 @@ class _ImportFileState extends State<ImportFile> {
                           Spacer(),
                           IconButton(
                             onPressed: () async {
+                              if (!mounted) return;
                               setState(() {
                                 customBottomSheet(context: context);
                               });
@@ -85,9 +86,9 @@ class _ImportFileState extends State<ImportFile> {
 
           child: InkWell(
             onTap: () {
+              if (!mounted) return;
               setState(() {
                 customBottomSheet(context: context);
-                print("Import File Button Pressed");
               });
             },
             child: Column(
