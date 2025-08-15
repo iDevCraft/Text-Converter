@@ -118,6 +118,7 @@ class _ResultpageState extends State<Resultpage> {
                                 child: DefaultTabController(
                                   length: 2,
                                   child: TabBar(
+                                    onTap: onTabTapped,
                                     indicatorSize: TabBarIndicatorSize.label,
                                     labelPadding: EdgeInsets.only(left: 5.w),
                                     indicatorColor: Color(0xff9f9f9f),
