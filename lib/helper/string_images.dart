@@ -8,6 +8,7 @@ String importFileFirst = "assets/image/import_file_fist.png";
 String tick = "assets/image/tick.png";
 String convert = "assets/image/convert_vector.png";
 String copytext = "assets/image/copytext_ventor.png";
+String back = "assets/image/back.png";
 
 // Colors
 

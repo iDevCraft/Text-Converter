@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:flutter/services.dart';
+import 'package:text_converter/helper/string_images.dart';
 
 class Resultpage extends StatefulWidget {
   final List<Uint8List> images;
@@ -35,12 +36,19 @@ class _ResultpageState extends State<Resultpage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "EXTRACTOR",
-          style: GoogleFonts.inter(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
-          ),
+        leading: Image.asset(back),
+        title: Row(
+          children: [
+            Image.asset(txt_component, scale: 8.sp),
+            SizedBox(width: 1.w),
+            Text(
+              "EXTRACTOR",
+              style: GoogleFonts.inter(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
       body: Container(
@@ -153,12 +161,12 @@ class _ResultpageState extends State<Resultpage> {
 
                     Positioned(
                       left: 30.w,
-                      bottom: 1.h,
+                      bottom: 2.h,
                       width: 36.w,
                       height: 7.h,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: blue,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -177,13 +185,13 @@ class _ResultpageState extends State<Resultpage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.copy, color: Colors.white),
+                            Image.asset(copytext),
                             Text(
                               "Copy Text",
                               style: GoogleFonts.inter(
-                                fontSize: 15.sp,
+                                fontSize: 16.sp,
                                 color: Colors.white,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ],

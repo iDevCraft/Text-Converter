@@ -1,55 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:text_converter/screens/import_file.dart';
 
 Future<void> showDialogBox(BuildContext context) {
   return showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
+        backgroundColor: const Color(0xFF2B2B2B), // dark theme look
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "WARNING!",
-              style: GoogleFonts.inter(
-                fontSize: 16.sp,
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
+        title: Center(
+          child: Text(
+            "WARNING!",
+            style: GoogleFonts.inter(
+              fontSize: 16.sp,
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
             ),
-          ],
+          ),
         ),
-        content: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "You Want to Discard\nImport?",
-
-              style: GoogleFonts.inter(
-                fontSize: 16.sp,
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+        content: Text(
+          "You want to discard\nimport?",
+          style: GoogleFonts.inter(
+            fontSize: 16.sp,
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+          textAlign: TextAlign.center,
         ),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: 20.w,
+                width: 23.w,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.5, color: Color(0Xff6e6e6e)),
-                      borderRadius: BorderRadiusGeometry.circular(18),
+                      side: const BorderSide(
+                        width: 1.5,
+                        color: Color(0Xff6e6e6e),
+                      ),
+                      borderRadius: BorderRadius.circular(18),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     "No",
                     style: GoogleFonts.inter(
@@ -62,15 +61,31 @@ Future<void> showDialogBox(BuildContext context) {
               ),
               SizedBox(width: 15.w),
               SizedBox(
-                width: 20.w,
+                width: 23.w,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.transparent,
                     shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.5, color: Color(0Xff6e6e6e)),
-                      borderRadius: BorderRadiusGeometry.circular(18),
+                      side: const BorderSide(
+                        width: 1.5,
+                        color: Color(0Xff6e6e6e),
+                      ),
+                      borderRadius: BorderRadius.circular(18),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context); // dialog close
+                    Navigator.popUntil(
+                      context,
+                      (route) => route.isFirst,
+                    ); // home pe le jao
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ImportFile(),
+                      ),
+                    );
+                  },
                   child: Text(
                     "Yes",
                     style: GoogleFonts.inter(

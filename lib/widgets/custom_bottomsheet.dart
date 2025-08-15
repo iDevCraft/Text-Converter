@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:text_converter/helper/string_images.dart';
 import 'package:text_converter/screens/fetch_file.dart';
 import 'package:text_converter/screens/helper/imagesScreen.dart';
 import 'package:text_converter/screens/helper/pdfScreen.dart';
@@ -18,6 +19,12 @@ Future<void> customBottomSheet({required BuildContext context}) {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Image.asset(back),
+            ),
             actions: [
               Container(
                 margin: EdgeInsets.only(right: 2.w),

@@ -16,6 +16,12 @@ class _ImportFileState extends State<ImportFile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Image.asset(back),
+        ),
         title: SizedBox(
           width: double.infinity,
           child: Column(

@@ -5,6 +5,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/helper/string_images.dart';
 import 'package:text_converter/screens/resultpage.dart';
 import 'package:text_converter/screens/text_detect/text_detector.dart';
+import 'package:text_converter/widgets/customDialogBox.dart';
 
 class FetchFile extends StatefulWidget {
   final List<Uint8List> selectedFiles;
@@ -54,6 +55,14 @@ class _FetchFileState extends State<FetchFile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            setState(() {
+              showDialogBox(context);
+            });
+          },
+          icon: Image.asset(back),
+        ),
         title: Row(
           children: [
             Image.asset(appbar_image),
