@@ -14,7 +14,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   bool permissionGranted = false;
-  bool isCheckingPermission = true; // Loader while checking permission
+  bool isCheckingPermission = true;
 
   @override
   void initState() {
@@ -101,7 +101,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           actions: [
             PopupMenuButton(
-              color: lightGrey,
+              color: lightgrey,
               itemBuilder: (context) => [
                 const PopupMenuItem(value: 1, child: Text("Option 1")),
                 const PopupMenuItem(value: 2, child: Text("Option 2")),
@@ -111,7 +111,7 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
         body: Container(
-          color: lightGrey,
+          color: lightgrey,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

@@ -1,25 +1,33 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:text_converter/helper/string_images.dart';
 import 'package:text_converter/utils/permission_Service.dart';
 
 class Imagesscreen extends StatefulWidget {
   final Function(List<AssetEntity>) onImagesSelected;
   final List<AssetEntity> previouslySelected;
+
   const Imagesscreen({
     super.key,
     required this.onImagesSelected,
     required this.previouslySelected,
   });
+
   @override
   State<Imagesscreen> createState() => _ImagesscreenState();
 }
 
-class _ImagesscreenState extends State<Imagesscreen> {
+class _ImagesscreenState extends State<Imagesscreen>
+    with AutomaticKeepAliveClientMixin {
   List<AssetEntity> images = [];
   List<Uint8List?> thumbnails = [];
   Set<String> selectedIds = {};
   bool isLoading = true;
+
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
@@ -89,6 +97,8 @@ class _ImagesscreenState extends State<Imagesscreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     if (isLoading) {
       return const Center(
         child: CircularProgressIndicator(color: Colors.white),
@@ -99,7 +109,7 @@ class _ImagesscreenState extends State<Imagesscreen> {
         color: Colors.blueAccent,
         onRefresh: _checkPermissionAndLoadImages,
         child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: NeverScrollableScrollPhysics(),
           children: const [
             SizedBox(height: 300),
             Center(
@@ -112,67 +122,66 @@ class _ImagesscreenState extends State<Imagesscreen> {
         ),
       );
     }
-    return RefreshIndicator(
-      color: Colors.blueAccent,
-      onRefresh: _checkPermissionAndLoadImages,
-      child: GridView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(8),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-        ),
-        itemCount: images.length,
-        itemBuilder: (context, index) {
-          final asset = images[index];
-          final isSelected = selectedIds.contains(asset.id);
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                if (isSelected) {
-                  selectedIds.remove(asset.id);
-                } else {
-                  selectedIds.add(asset.id);
-                }
-              });
-              _updateSelectedImages();
-            },
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox.expand(
-                    // 👈 yeh ensure karega ke image pura cell cover kare
-                    child: thumbnails[index] != null
-                        ? Image.memory(
-                            thumbnails[index]!,
-                            fit: BoxFit.cover, // 👈 ab image pura fill karegi
-                          )
-                        : Container(color: Colors.grey),
-                  ),
-                ),
-                if (isSelected)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.blueAccent,
-                      ),
-                      padding: const EdgeInsets.all(5),
-                      child: const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 20,
-                      ),
+    return Scaffold(
+      backgroundColor: lightgrey,
+      body: RefreshIndicator(
+        color: Colors.blueAccent,
+        onRefresh: _checkPermissionAndLoadImages,
+        child: GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(8),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+          ),
+          itemCount: images.length,
+          itemBuilder: (context, index) {
+            final asset = images[index];
+            final isSelected = selectedIds.contains(asset.id);
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedIds.remove(asset.id);
+                  } else {
+                    selectedIds.add(asset.id);
+                  }
+                });
+                _updateSelectedImages();
+              },
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: SizedBox.expand(
+                      child: thumbnails[index] != null
+                          ? Image.memory(thumbnails[index]!, fit: BoxFit.cover)
+                          : Container(color: Colors.grey),
                     ),
                   ),
-              ],
-            ),
-          );
-        },
+                  if (isSelected)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.blueAccent,
+                        ),
+                        padding: const EdgeInsets.all(5),
+                        child: const Icon(
+                          Icons.check,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

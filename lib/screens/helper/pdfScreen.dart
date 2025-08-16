@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/helper/string_images.dart';
+import 'package:text_converter/utils/permission_Service.dart';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({super.key});
@@ -11,9 +14,13 @@ class PdfScreen extends StatefulWidget {
   State<PdfScreen> createState() => _PdfScreenState();
 }
 
-class _PdfScreenState extends State<PdfScreen> {
+class _PdfScreenState extends State<PdfScreen>
+    with AutomaticKeepAliveClientMixin {
   List<File> pdfFiles = [];
   bool isLoading = true;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -24,8 +31,7 @@ class _PdfScreenState extends State<PdfScreen> {
   Future<void> _checkPermissionAndLoadPdfs() async {
     setState(() => isLoading = true);
 
-    // Special permission
-    bool granted = await _requestStoragePermission();
+    bool granted = await PermissionsService.requestImagesPermission();
 
     if (!mounted) return;
 
@@ -34,10 +40,8 @@ class _PdfScreenState extends State<PdfScreen> {
       return;
     }
 
-    // Start fetching PDFs
     pdfFiles.clear();
 
-    // Common accessible folders
     List<Directory> folders = [
       Directory("/storage/emulated/0/Download"),
       Directory("/storage/emulated/0/Documents"),
@@ -52,37 +56,6 @@ class _PdfScreenState extends State<PdfScreen> {
     setState(() => isLoading = false);
   }
 
-  Future<bool> _requestStoragePermission() async {
-    if (!Platform.isAndroid) return true;
-
-    final androidInfo = await DeviceInfoPlugin().androidInfo;
-    int sdkInt = androidInfo.version.sdkInt;
-
-    if (sdkInt >= 30) {
-      if (await Permission.manageExternalStorage.isGranted) return true;
-      var status = await Permission.manageExternalStorage.request();
-      return status.isGranted;
-    } else {
-      var status = await Permission.storage.status;
-      if (!status.isGranted) status = await Permission.storage.request();
-      return status.isGranted;
-    }
-  }
-
-  // Future<void> _loadPdfFiles() async {
-  //   pdfFiles.clear();
-
-  //   try {
-  //     final rootDir = Directory("/storage/emulated/0");
-  //     await _scanDirectory(rootDir);
-  //   } catch (e) {
-  //     debugPrint("Error scanning files: $e");
-  //   }
-
-  //   if (!mounted) return;
-  //   setState(() => isLoading = false);
-  // }
-
   Future<void> _scanDirectory(Directory dir) async {
     try {
       if (!await dir.exists()) return;
@@ -95,7 +68,7 @@ class _PdfScreenState extends State<PdfScreen> {
           if (folderName == "android" ||
               folderName == "obb" ||
               folderName == "data") {
-            continue; // skip restricted folders
+            continue;
           }
         }
       }
@@ -114,8 +87,10 @@ class _PdfScreenState extends State<PdfScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF2b2b2b),
+      backgroundColor: lightgrey,
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : pdfFiles.isEmpty
@@ -148,14 +123,25 @@ class _PdfScreenState extends State<PdfScreen> {
                       leading: Image.asset(pdf),
                       title: Text(
                         file.path.split('/').last,
-                        style: const TextStyle(color: Colors.white),
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: false,
                       ),
                       subtitle: Text(
                         formatBytes(file.lengthSync()),
-                        style: const TextStyle(color: Colors.grey),
+                        style: GoogleFonts.inter(
+                          color: Colors.grey,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       onTap: () {
-                        // TODO: Open PDF file
+                        // TODO: Open PDF
                       },
                     ),
                   );

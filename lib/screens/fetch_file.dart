@@ -20,13 +20,12 @@ class _FetchFileState extends State<FetchFile> {
   bool isExtracting = false;
   TextDetectorHelper textDetectorHelper = TextDetectorHelper();
 
-  // 👇 yahan local list rakho (mutable copy)
   late List<Uint8List> selectedImages;
 
   @override
   void initState() {
     super.initState();
-    selectedImages = List.from(widget.selectedFiles); // copy
+    selectedImages = List.from(widget.selectedFiles);
   }
 
   Future<void> _extractText() async {
@@ -101,7 +100,7 @@ class _FetchFileState extends State<FetchFile> {
         ),
         actions: [
           PopupMenuButton(
-            color: lightGrey,
+            color: lightgrey,
             itemBuilder: (context) => [
               PopupMenuItem(child: Text("data")),
               PopupMenuItem(child: Text("data2")),
@@ -111,7 +110,7 @@ class _FetchFileState extends State<FetchFile> {
       ),
       body: Container(
         width: double.infinity,
-        color: lightGrey,
+        color: lightgrey,
         child: Column(
           children: [
             SizedBox(

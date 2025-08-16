@@ -14,7 +14,7 @@ Future<void> customBottomSheet({
   required List<Uint8List> alreadySelectedImages,
   required Function(List<Uint8List>) onImagesUpdated,
 }) {
-  List<AssetEntity> selectedAssets = []; // ✅ yeh internal hoga
+  List<AssetEntity> selectedAssets = [];
   List<Uint8List> selectedBytes = List.from(alreadySelectedImages);
 
   return showModalBottomSheet(

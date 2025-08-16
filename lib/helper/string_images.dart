@@ -14,6 +14,8 @@ String pdf = "assets/image/pdf.png";
 
 // Colors
 
-Color lightGrey = const Color(0xFF2b2b2b);
+Color lightgrey = const Color(
+  0xFF2b2b2b,
+); // for image and pdf pages background color and other
 Color grey = const Color(0xFF959595);
 Color blue = const Color(0xFF1a5abb);

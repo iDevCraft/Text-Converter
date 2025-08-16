@@ -89,7 +89,7 @@ class _ImportFileState extends State<ImportFile> {
 
       body: Center(
         child: Container(
-          color: lightGrey,
+          color: lightgrey,
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
