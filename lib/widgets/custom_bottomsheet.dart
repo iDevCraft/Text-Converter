@@ -11,7 +11,7 @@ import 'package:text_converter/screens/helper/pdfScreen.dart';
 
 Future<void> customBottomSheet({
   required BuildContext context,
-  required List<Uint8List> alreadySelectedImages, // 👈 ab yahi rakhenge
+  required List<Uint8List> alreadySelectedImages,
   required Function(List<Uint8List>) onImagesUpdated,
 }) {
   List<AssetEntity> selectedAssets = []; // ✅ yeh internal hoga

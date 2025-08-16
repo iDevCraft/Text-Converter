@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:text_converter/helper/string_images.dart';
 import 'package:text_converter/screens/import_file.dart';
+import 'package:text_converter/utils/permission_Service.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -12,25 +13,89 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  bool permissionGranted = false;
+  bool isCheckingPermission = true; // Loader while checking permission
+
+  @override
+  void initState() {
+    super.initState();
+    _requestPermissions();
+  }
+
+  Future<void> _requestPermissions() async {
+    // First time install
+    bool imagesGranted = await PermissionsService.requestImagesPermission();
+
+    if (!imagesGranted) {
+      await PermissionsService.openSettingsDialog();
+      setState(() {
+        permissionGranted = false;
+        isCheckingPermission = false;
+      });
+      return;
+    }
+
+    bool pdfGranted = await PermissionsService.requestPdfPermission();
+
+    if (!pdfGranted) {
+      await PermissionsService.openSettingsDialog();
+      setState(() {
+        permissionGranted = false;
+        isCheckingPermission = false;
+      });
+      return;
+    }
+
+    setState(() {
+      permissionGranted = true;
+      isCheckingPermission = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (isCheckingPermission) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (!permissionGranted) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Please allow storage and images permission to continue",
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 2.h),
+                ElevatedButton(
+                  onPressed: _requestPermissions,
+                  child: const Text("Grant Permission"),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Column(
+          title: Row(
             children: [
-              Row(
-                children: [
-                  Image.asset(txt_component, scale: 7.5.sp),
-                  SizedBox(width: 2.w),
-                  Text(
-                    "EXTRACTOR",
-                    style: GoogleFonts.inter(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+              Image.asset(txt_component, scale: 7.5.sp),
+              SizedBox(width: 2.w),
+              Text(
+                "EXTRACTOR",
+                style: GoogleFonts.inter(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -38,12 +103,10 @@ class _MainScreenState extends State<MainScreen> {
             PopupMenuButton(
               color: lightGrey,
               itemBuilder: (context) => [
-                PopupMenuItem(value: 1, child: Text("Option 1")),
-                PopupMenuItem(value: 2, child: Text("Option 2")),
+                const PopupMenuItem(value: 1, child: Text("Option 1")),
+                const PopupMenuItem(value: 2, child: Text("Option 2")),
               ],
-              onSelected: (value) {
-                // Handle menu selection
-              },
+              onSelected: (value) {},
             ),
           ],
         ),
@@ -54,11 +117,11 @@ class _MainScreenState extends State<MainScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "TO EXTRACT TEXT FROM\nPDF FILES & IMAGES ",
+                  "TO EXTRACT TEXT FROM\nPDF FILES & IMAGES",
                   style: GoogleFonts.inter(
                     fontSize: 17.sp,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF8d8c8c),
+                    color: const Color(0xFF8d8c8c),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -68,9 +131,7 @@ class _MainScreenState extends State<MainScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) {
-                          return ImportFile();
-                        },
+                        builder: (context) => const ImportFile(),
                       ),
                     );
                   },

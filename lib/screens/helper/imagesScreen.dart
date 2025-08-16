@@ -1,17 +1,16 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:text_converter/utils/permission_Service.dart';
 
 class Imagesscreen extends StatefulWidget {
   final Function(List<AssetEntity>) onImagesSelected;
   final List<AssetEntity> previouslySelected;
-
   const Imagesscreen({
     super.key,
     required this.onImagesSelected,
     required this.previouslySelected,
   });
-
   @override
   State<Imagesscreen> createState() => _ImagesscreenState();
 }
@@ -19,10 +18,8 @@ class Imagesscreen extends StatefulWidget {
 class _ImagesscreenState extends State<Imagesscreen> {
   List<AssetEntity> images = [];
   List<Uint8List?> thumbnails = [];
-
   Set<String> selectedIds = {};
   bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
@@ -30,8 +27,10 @@ class _ImagesscreenState extends State<Imagesscreen> {
   }
 
   Future<void> _checkPermissionAndLoadImages() async {
-    final result = await PhotoManager.requestPermissionExtend();
-    if (!result.isAuth) {
+    // App install ke sath hi permission check ho raha hai via PermissionsService
+    bool granted = await PermissionsService.requestImagesPermission();
+
+    if (!granted) {
       if (!mounted) return;
       setState(() {
         isLoading = false;
@@ -96,7 +95,6 @@ class _ImagesscreenState extends State<Imagesscreen> {
         child: CircularProgressIndicator(color: Colors.white),
       );
     }
-
     if (images.isEmpty) {
       return RefreshIndicator(
         color: Colors.blueAccent,
@@ -115,7 +113,6 @@ class _ImagesscreenState extends State<Imagesscreen> {
         ),
       );
     }
-
     return RefreshIndicator(
       color: Colors.blueAccent,
       onRefresh: _checkPermissionAndLoadImages,
@@ -131,7 +128,6 @@ class _ImagesscreenState extends State<Imagesscreen> {
         itemBuilder: (context, index) {
           final asset = images[index];
           final isSelected = selectedIds.contains(asset.id);
-
           return GestureDetector(
             onTap: () {
               setState(() {
@@ -148,8 +144,12 @@ class _ImagesscreenState extends State<Imagesscreen> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: SizedBox.expand(
+                    // 👈 yeh ensure karega ke image pura cell cover kare
                     child: thumbnails[index] != null
-                        ? Image.memory(thumbnails[index]!, fit: BoxFit.cover)
+                        ? Image.memory(
+                            thumbnails[index]!,
+                            fit: BoxFit.cover, // 👈 ab image pura fill karegi
+                          )
                         : Container(color: Colors.grey),
                   ),
                 ),
