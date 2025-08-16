@@ -74,7 +74,7 @@ class _ImagesscreenState extends State<Imagesscreen> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator(color: Colors.white))
         : GridView.builder(
             padding: const EdgeInsets.all(8),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -101,7 +101,7 @@ class _ImagesscreenState extends State<Imagesscreen> {
                 child: Stack(
                   children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(5),
                       child: thumbnails[index] != null
                           ? Image.memory(thumbnails[index]!, fit: BoxFit.cover)
                           : Container(color: Colors.grey),
