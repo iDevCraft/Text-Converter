@@ -129,15 +129,12 @@ class _FetchFileState extends State<FetchFile> {
                           onImagesUpdated: (updatedList) {
                             setState(() {
                               final newSet = <String, Uint8List>{};
-
                               for (var img in selectedImages) {
                                 newSet[String.fromCharCodes(img)] = img;
                               }
-
                               for (var img in updatedList) {
                                 newSet[String.fromCharCodes(img)] = img;
                               }
-
                               selectedImages = newSet.values.toList();
                             });
                           },

@@ -68,8 +68,7 @@ class _ImportFileState extends State<ImportFile> {
                                 alreadySelectedImages: selectedImages,
                                 onImagesUpdated: (updatedList) {
                                   setState(() {
-                                    selectedImages =
-                                        updatedList; // 👈 Update local list
+                                    selectedImages = updatedList;
                                   });
                                 },
                               );
@@ -102,7 +101,7 @@ class _ImportFileState extends State<ImportFile> {
                     alreadySelectedImages: selectedImages,
                     onImagesUpdated: (updatedList) {
                       setState(() {
-                        selectedImages = updatedList; // 👈 Update local list
+                        selectedImages = updatedList;
                       });
                     },
                   );

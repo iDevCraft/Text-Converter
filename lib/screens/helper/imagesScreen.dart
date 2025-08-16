@@ -1,10 +1,6 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
 class Imagesscreen extends StatefulWidget {
   final Function(List<AssetEntity>) onImagesSelected;
@@ -24,7 +20,7 @@ class _ImagesscreenState extends State<Imagesscreen> {
   List<AssetEntity> images = [];
   List<Uint8List?> thumbnails = [];
 
-  Set<String> selectedIds = {}; // 👈 ab IDs track karenge
+  Set<String> selectedIds = {};
   bool isLoading = true;
 
   @override
@@ -34,10 +30,30 @@ class _ImagesscreenState extends State<Imagesscreen> {
   }
 
   Future<void> _checkPermissionAndLoadImages() async {
+    final result = await PhotoManager.requestPermissionExtend();
+    if (!result.isAuth) {
+      if (!mounted) return;
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
     final albums = await PhotoManager.getAssetPathList(
       type: RequestType.image,
       onlyAll: true,
     );
+
+    if (albums.isEmpty) {
+      if (!mounted) return;
+      setState(() {
+        images = [];
+        thumbnails = [];
+        isLoading = false;
+      });
+      return;
+    }
+
     final media = await albums.first.getAssetListPaged(page: 0, size: 100);
 
     List<Uint8List?> tempThumbs = [];
@@ -47,6 +63,7 @@ class _ImagesscreenState extends State<Imagesscreen> {
       );
     }
 
+    if (!mounted) return;
     setState(() {
       images = media;
       thumbnails = tempThumbs;
@@ -58,8 +75,9 @@ class _ImagesscreenState extends State<Imagesscreen> {
 
   void _preselectPreviouslySelected() {
     for (var prev in widget.previouslySelected) {
-      selectedIds.add(prev.id); // ✅ direct ID match
+      selectedIds.add(prev.id);
     }
+    if (!mounted) return;
     setState(() {});
     _updateSelectedImages();
   }
@@ -73,60 +91,90 @@ class _ImagesscreenState extends State<Imagesscreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? const Center(child: CircularProgressIndicator(color: Colors.white))
-        : GridView.builder(
-            padding: const EdgeInsets.all(8),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: images.length,
-            itemBuilder: (context, index) {
-              final asset = images[index];
-              final isSelected = selectedIds.contains(asset.id);
+    if (isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: Colors.white),
+      );
+    }
 
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      selectedIds.remove(asset.id);
-                    } else {
-                      selectedIds.add(asset.id);
-                    }
-                  });
-                  _updateSelectedImages();
-                },
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: thumbnails[index] != null
-                          ? Image.memory(thumbnails[index]!, fit: BoxFit.cover)
-                          : Container(color: Colors.grey),
-                    ),
-                    if (isSelected)
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.blueAccent,
-                          ),
-                          padding: const EdgeInsets.all(5),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              );
+    if (images.isEmpty) {
+      return RefreshIndicator(
+        color: Colors.blueAccent,
+        onRefresh: _checkPermissionAndLoadImages,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 300),
+            Center(
+              child: Text(
+                "No images found",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      color: Colors.blueAccent,
+      onRefresh: _checkPermissionAndLoadImages,
+      child: GridView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(8),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+        ),
+        itemCount: images.length,
+        itemBuilder: (context, index) {
+          final asset = images[index];
+          final isSelected = selectedIds.contains(asset.id);
+
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                if (isSelected) {
+                  selectedIds.remove(asset.id);
+                } else {
+                  selectedIds.add(asset.id);
+                }
+              });
+              _updateSelectedImages();
             },
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: SizedBox.expand(
+                    child: thumbnails[index] != null
+                        ? Image.memory(thumbnails[index]!, fit: BoxFit.cover)
+                        : Container(color: Colors.grey),
+                  ),
+                ),
+                if (isSelected)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.blueAccent,
+                      ),
+                      padding: const EdgeInsets.all(5),
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           );
+        },
+      ),
+    );
   }
 }

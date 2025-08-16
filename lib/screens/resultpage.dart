@@ -83,7 +83,7 @@ class _ResultpageState extends State<Resultpage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: currentImageIndex == index
-                              ? Colors.blue
+                              ? Colors.grey
                               : Colors.transparent,
                           width: 2,
                         ),
@@ -127,7 +127,9 @@ class _ResultpageState extends State<Resultpage> {
                                   child: TabBar(
                                     onTap: onTabTapped,
                                     indicatorSize: TabBarIndicatorSize.label,
-                                    indicatorColor: Color(0xff9f9f9f),
+                                    indicatorColor: Colors.white,
+                                    tabAlignment: TabAlignment.start,
+
                                     labelStyle: GoogleFonts.inter(
                                       fontSize: 16.sp,
                                       color: Colors.white,
@@ -139,14 +141,6 @@ class _ResultpageState extends State<Resultpage> {
                                   ),
                                 ),
                               ),
-                              // Container(
-                              //   margin: EdgeInsets.only(
-                              //     top: 2.h,
-                              //     bottom: 1.h,
-                              //     left: 3.w,
-                              //   ),
-                              //   child: Text("data"),
-                              // ),
                             ],
                           ),
 

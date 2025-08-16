@@ -47,17 +47,15 @@ Future<void> customBottomSheet({
                         ),
                       );
                     } else {
-                      // 👇 Convert AssetEntity → Uint8List
                       List<Uint8List> converted = [];
                       for (var asset in selectedAssets) {
                         final data = await asset.originBytes;
                         if (data != null) converted.add(data);
                       }
 
-                      // merge previous + new
                       final merged = [...selectedBytes, ...converted];
 
-                      onImagesUpdated(merged); // ✅ callback with Uint8List
+                      onImagesUpdated(merged);
                       Navigator.pop(context);
 
                       Navigator.push(
@@ -107,10 +105,9 @@ Future<void> customBottomSheet({
             children: [
               Imagesscreen(
                 onImagesSelected: (files) {
-                  selectedAssets = files; // ✅ abhi sirf AssetEntity store
+                  selectedAssets = files;
                 },
-                previouslySelected:
-                    [], // ❌ Uint8List ko direct pass nahi kar sakte
+                previouslySelected: [],
               ),
               const PdfScreen(),
             ],
