@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:text_converter/helper/string_images.dart';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({super.key});
@@ -13,7 +14,6 @@ class PdfScreen extends StatefulWidget {
 class _PdfScreenState extends State<PdfScreen> {
   List<File> pdfFiles = [];
   bool isLoading = true;
-  bool permissionGranted = false;
 
   @override
   void initState() {
@@ -24,48 +24,64 @@ class _PdfScreenState extends State<PdfScreen> {
   Future<void> _checkPermissionAndLoadPdfs() async {
     setState(() => isLoading = true);
 
+    // Special permission
     bool granted = await _requestStoragePermission();
 
     if (!mounted) return;
 
-    if (granted) {
-      permissionGranted = true;
-      await _loadPdfFiles();
-    } else {
-      permissionGranted = false;
+    if (!granted) {
       setState(() => isLoading = false);
+      return;
     }
-  }
 
-  Future<bool> _requestStoragePermission() async {
-    if (Platform.isAndroid) {
-      final androidInfo = await DeviceInfoPlugin().androidInfo;
-      int sdkInt = androidInfo.version.sdkInt;
-
-      if (sdkInt >= 30) {
-        if (await Permission.manageExternalStorage.isGranted) return true;
-        var status = await Permission.manageExternalStorage.request();
-        return status.isGranted;
-      } else {
-        var status = await Permission.storage.status;
-        if (!status.isGranted) status = await Permission.storage.request();
-        return status.isGranted;
-      }
-    }
-    return true; // iOS / others
-  }
-
-  Future<void> _loadPdfFiles() async {
+    // Start fetching PDFs
     pdfFiles.clear();
-    try {
-      final rootDir = Directory("/storage/emulated/0");
-      await _scanDirectory(rootDir);
-    } catch (e) {
-      debugPrint("Error scanning files: $e");
+
+    // Common accessible folders
+    List<Directory> folders = [
+      Directory("/storage/emulated/0/Download"),
+      Directory("/storage/emulated/0/Documents"),
+      Directory("/storage/emulated/0/"),
+    ];
+
+    for (var folder in folders) {
+      await _scanDirectory(folder);
     }
+
     if (!mounted) return;
     setState(() => isLoading = false);
   }
+
+  Future<bool> _requestStoragePermission() async {
+    if (!Platform.isAndroid) return true;
+
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    int sdkInt = androidInfo.version.sdkInt;
+
+    if (sdkInt >= 30) {
+      if (await Permission.manageExternalStorage.isGranted) return true;
+      var status = await Permission.manageExternalStorage.request();
+      return status.isGranted;
+    } else {
+      var status = await Permission.storage.status;
+      if (!status.isGranted) status = await Permission.storage.request();
+      return status.isGranted;
+    }
+  }
+
+  // Future<void> _loadPdfFiles() async {
+  //   pdfFiles.clear();
+
+  //   try {
+  //     final rootDir = Directory("/storage/emulated/0");
+  //     await _scanDirectory(rootDir);
+  //   } catch (e) {
+  //     debugPrint("Error scanning files: $e");
+  //   }
+
+  //   if (!mounted) return;
+  //   setState(() => isLoading = false);
+  // }
 
   Future<void> _scanDirectory(Directory dir) async {
     try {
@@ -96,71 +112,55 @@ class _PdfScreenState extends State<PdfScreen> {
     return "${size.toStringAsFixed(2)} ${suffixes[i]}";
   }
 
-  Future<void> _openSettingsAndReload() async {
-    await openAppSettings();
-    Future.delayed(const Duration(seconds: 1), () async {
-      bool status = await _requestStoragePermission();
-      if (status) {
-        setState(() {
-          permissionGranted = true;
-          isLoading = true;
-        });
-        await _loadPdfFiles();
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF2b2b2b),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
-          : !permissionGranted
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    "Storage permission is required to find PDF files",
-                    style: TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: _openSettingsAndReload,
-                    child: const Text("Grant Permission"),
+          : pdfFiles.isEmpty
+          ? RefreshIndicator(
+              color: Colors.blueAccent,
+              onRefresh: _checkPermissionAndLoadPdfs,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: const [
+                  SizedBox(height: 300),
+                  Center(
+                    child: Text(
+                      "No PDF files found",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
             )
-          : pdfFiles.isEmpty
-          ? const Center(
-              child: Text(
-                "No PDF files found",
-                style: TextStyle(color: Colors.white),
+          : RefreshIndicator(
+              color: Colors.blueAccent,
+              onRefresh: _checkPermissionAndLoadPdfs,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: pdfFiles.length,
+                itemBuilder: (context, index) {
+                  final file = pdfFiles[index];
+                  return Card(
+                    child: ListTile(
+                      leading: Image.asset(pdf),
+                      title: Text(
+                        file.path.split('/').last,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        formatBytes(file.lengthSync()),
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                      onTap: () {
+                        // TODO: Open PDF file
+                      },
+                    ),
+                  );
+                },
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: pdfFiles.length,
-              itemBuilder: (context, index) {
-                final file = pdfFiles[index];
-                return ListTile(
-                  leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-                  title: Text(
-                    file.path.split('/').last,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  subtitle: Text(
-                    formatBytes(file.lengthSync()),
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  onTap: () {
-                    // TODO: Open PDF file
-                  },
-                );
-              },
             ),
     );
   }

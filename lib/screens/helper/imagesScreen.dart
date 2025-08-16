@@ -27,7 +27,6 @@ class _ImagesscreenState extends State<Imagesscreen> {
   }
 
   Future<void> _checkPermissionAndLoadImages() async {
-    // App install ke sath hi permission check ho raha hai via PermissionsService
     bool granted = await PermissionsService.requestImagesPermission();
 
     if (!granted) {
