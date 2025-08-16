@@ -1,14 +1,21 @@
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:text_converter/helper/string_images.dart';
 import 'package:text_converter/screens/fetch_file.dart';
 import 'package:text_converter/screens/helper/imagesScreen.dart';
 import 'package:text_converter/screens/helper/pdfScreen.dart';
 
-Future<void> customBottomSheet({required BuildContext context}) {
-  List<Uint8List> selectedImages = [];
+Future<void> customBottomSheet({
+  required BuildContext context,
+  required List<Uint8List> alreadySelectedImages, // 👈 ab yahi rakhenge
+  required Function(List<Uint8List>) onImagesUpdated,
+}) {
+  List<AssetEntity> selectedAssets = []; // ✅ yeh internal hoga
+  List<Uint8List> selectedBytes = List.from(alreadySelectedImages);
 
   return showModalBottomSheet(
     enableDrag: false,
@@ -31,21 +38,33 @@ Future<void> customBottomSheet({required BuildContext context}) {
               Container(
                 margin: EdgeInsets.only(right: 2.w),
                 child: TextButton(
-                  onPressed: () {
-                    if (selectedImages.isEmpty) {
+                  onPressed: () async {
+                    if (selectedAssets.isEmpty && selectedBytes.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text("Please Select Image"),
                           duration: Duration(milliseconds: 2000),
                         ),
                       );
                     } else {
+                      // 👇 Convert AssetEntity → Uint8List
+                      List<Uint8List> converted = [];
+                      for (var asset in selectedAssets) {
+                        final data = await asset.originBytes;
+                        if (data != null) converted.add(data);
+                      }
+
+                      // merge previous + new
+                      final merged = [...selectedBytes, ...converted];
+
+                      onImagesUpdated(merged); // ✅ callback with Uint8List
                       Navigator.pop(context);
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              FetchFile(selectedFiles: selectedImages),
+                              FetchFile(selectedFiles: merged),
                         ),
                       );
                     }
@@ -68,7 +87,6 @@ Future<void> customBottomSheet({required BuildContext context}) {
                 fontSize: 16.sp,
               ),
             ),
-
             bottom: TabBar(
               labelColor: Colors.white,
               dividerHeight: 0.1,
@@ -89,10 +107,12 @@ Future<void> customBottomSheet({required BuildContext context}) {
             children: [
               Imagesscreen(
                 onImagesSelected: (files) {
-                  selectedImages = files;
+                  selectedAssets = files; // ✅ abhi sirf AssetEntity store
                 },
+                previouslySelected:
+                    [], // ❌ Uint8List ko direct pass nahi kar sakte
               ),
-              PdfScreen(),
+              const PdfScreen(),
             ],
           ),
         ),

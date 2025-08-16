@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -12,6 +14,7 @@ class ImportFile extends StatefulWidget {
 }
 
 class _ImportFileState extends State<ImportFile> {
+  List<Uint8List> selectedImages = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +63,16 @@ class _ImportFileState extends State<ImportFile> {
                           IconButton(
                             onPressed: () async {
                               if (!mounted) return;
-                              setState(() {
-                                customBottomSheet(context: context);
-                              });
+                              customBottomSheet(
+                                context: context,
+                                alreadySelectedImages: selectedImages,
+                                onImagesUpdated: (updatedList) {
+                                  setState(() {
+                                    selectedImages =
+                                        updatedList; // 👈 Update local list
+                                  });
+                                },
+                              );
                             },
                             icon: Image.asset(attachFile),
                           ),
@@ -87,7 +97,15 @@ class _ImportFileState extends State<ImportFile> {
             children: [
               InkWell(
                 onTap: () {
-                  customBottomSheet(context: context);
+                  customBottomSheet(
+                    context: context,
+                    alreadySelectedImages: selectedImages,
+                    onImagesUpdated: (updatedList) {
+                      setState(() {
+                        selectedImages = updatedList; // 👈 Update local list
+                      });
+                    },
+                  );
                 },
                 child: Column(
                   children: [

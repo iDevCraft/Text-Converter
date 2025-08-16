@@ -6,6 +6,7 @@ import 'package:text_converter/helper/string_images.dart';
 import 'package:text_converter/screens/resultpage.dart';
 import 'package:text_converter/screens/text_detect/text_detector.dart';
 import 'package:text_converter/widgets/customDialogBox.dart';
+import 'package:text_converter/widgets/custom_bottomsheet.dart';
 
 class FetchFile extends StatefulWidget {
   final List<Uint8List> selectedFiles;
@@ -19,6 +20,15 @@ class _FetchFileState extends State<FetchFile> {
   bool isExtracting = false;
   TextDetectorHelper textDetectorHelper = TextDetectorHelper();
 
+  // 👇 yahan local list rakho (mutable copy)
+  late List<Uint8List> selectedImages;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedImages = List.from(widget.selectedFiles); // copy
+  }
+
   Future<void> _extractText() async {
     setState(() {
       isExtracting = true;
@@ -26,17 +36,13 @@ class _FetchFileState extends State<FetchFile> {
 
     try {
       final resultList = await textDetectorHelper.getRecognizedTexts(
-        widget.selectedFiles,
+        selectedImages,
       );
       Navigator.push(
-        (context),
+        context,
         MaterialPageRoute(
-          builder: (context) {
-            return Resultpage(
-              images: widget.selectedFiles,
-              extractedTexts: resultList,
-            );
-          },
+          builder: (context) =>
+              Resultpage(images: selectedImages, extractedTexts: resultList),
         ),
       );
     } catch (e) {
@@ -55,10 +61,8 @@ class _FetchFileState extends State<FetchFile> {
         titleSpacing: 0.w,
         leading: IconButton(
           onPressed: () {
-            setState(() {
-              final text = "You Want to Discard\nImport?";
-              showDialogBox(context, text);
-            });
+            final text = "You Want to Discard\nImport?";
+            showDialogBox(context, text);
           },
           icon: Image.asset(back),
         ),
@@ -80,7 +84,7 @@ class _FetchFileState extends State<FetchFile> {
                     Text(
                       "File Imported",
                       style: GoogleFonts.inter(
-                        fontSize: 14.sp,
+                        fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -114,19 +118,62 @@ class _FetchFileState extends State<FetchFile> {
               height: 25.h,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.selectedFiles.length,
+                itemCount: selectedImages.length + 1,
                 itemBuilder: (context, index) {
-                  return Container(
-                    margin: EdgeInsets.all(3.w),
-                    width: 30.w,
-                    height: 15.h,
-                    child: Card(
+                  if (index == selectedImages.length) {
+                    return InkWell(
+                      onTap: () {
+                        customBottomSheet(
+                          context: context,
+                          alreadySelectedImages: selectedImages,
+                          onImagesUpdated: (updatedList) {
+                            setState(() {
+                              final newSet = <String, Uint8List>{};
+
+                              for (var img in selectedImages) {
+                                newSet[String.fromCharCodes(img)] = img;
+                              }
+
+                              for (var img in updatedList) {
+                                newSet[String.fromCharCodes(img)] = img;
+                              }
+
+                              selectedImages = newSet.values.toList();
+                            });
+                          },
+                        );
+                      },
+
+                      child: Container(
+                        margin: EdgeInsets.all(3.w),
+                        width: 30.w,
+                        height: 15.h,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey, width: 2),
+                          color: Colors.white10,
+                        ),
+                        child: Center(
+                          child: Icon(Icons.add, color: blue, size: 30.sp),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      margin: EdgeInsets.all(3.w),
+                      width: 30.w,
+                      height: 15.h,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey, width: 2),
+                        color: Colors.white10,
+                      ),
                       child: Image.memory(
-                        widget.selectedFiles[index],
+                        selectedImages[index],
                         fit: BoxFit.cover,
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
               ),
             ),
@@ -148,7 +195,6 @@ class _FetchFileState extends State<FetchFile> {
               ),
             ),
 
-            // Yaha se neeche button ko end me chipkane ka code
             Expanded(
               child: Align(
                 alignment: Alignment.bottomRight,
@@ -156,15 +202,13 @@ class _FetchFileState extends State<FetchFile> {
                   margin: EdgeInsets.only(bottom: 7.h, right: 5.w),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xff1A5ABB),
+                      backgroundColor: blue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
                       elevation: 0,
                     ),
-                    onPressed: () {
-                      _extractText();
-                    },
+                    onPressed: _extractText,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
