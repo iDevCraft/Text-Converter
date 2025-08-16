@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:external_path/external_path.dart';
 
 class PdfScreen extends StatefulWidget {
   const PdfScreen({super.key});
@@ -24,34 +23,9 @@ class _PdfScreenState extends State<PdfScreen> {
   }
 
   Future<void> _checkPermissionAndLoadPdfs() async {
-    bool granted = false;
-    setState(() {
-      isLoading = true;
-      permissionDenied = false;
-    });
+    bool granted = await _requestStoragePermission();
 
-    if (Platform.isAndroid) {
-      final deviceInfo = DeviceInfoPlugin();
-      final androidInfo = await deviceInfo.androidInfo;
-
-      if (androidInfo.version.sdkInt < 30) {
-        // Android 10 and below
-        granted = await Permission.storage.isGranted;
-        if (!granted) {
-          var status = await Permission.storage.request();
-          granted = status.isGranted;
-        }
-      } else {
-        // Android 11 and above
-        granted = await Permission.manageExternalStorage.isGranted;
-        if (!granted) {
-          var status = await Permission.manageExternalStorage.request();
-          granted = status.isGranted;
-        }
-      }
-    } else {
-      granted = true; // Non-Android platforms
-    }
+    if (!mounted) return;
 
     if (granted) {
       await _loadPdfFiles();
@@ -63,20 +37,40 @@ class _PdfScreenState extends State<PdfScreen> {
     }
   }
 
+  Future<bool> _requestStoragePermission() async {
+    if (!Platform.isAndroid) return true;
+
+    final androidInfo = await DeviceInfoPlugin().androidInfo;
+    int sdkInt = androidInfo.version.sdkInt;
+
+    if (sdkInt >= 30) {
+      // Android 11+
+      if (await Permission.manageExternalStorage.isGranted) return true;
+
+      var status = await Permission.manageExternalStorage.request();
+      if (status.isGranted) return true;
+
+      // Force user to open settings
+      await openAppSettings();
+      return false;
+    } else {
+      // Android 10 and below
+      var status = await Permission.storage.request();
+      return status.isGranted;
+    }
+  }
+
   Future<void> _loadPdfFiles() async {
     pdfFiles.clear();
     try {
-      List<String> storagePaths =
-          await ExternalPath.getExternalStorageDirectories() ?? [];
-
-      // Scan each available storage directory
-      for (String path in storagePaths) {
-        await _getFiles(path);
-      }
+      // Scan root storage
+      final rootDir = Directory("/storage/emulated/0");
+      await _getFiles(rootDir.path);
     } catch (e) {
       debugPrint("Error scanning files: $e");
     }
 
+    if (!mounted) return;
     setState(() {
       isLoading = false;
     });
@@ -84,20 +78,19 @@ class _PdfScreenState extends State<PdfScreen> {
 
   Future<void> _getFiles(String directoryPath) async {
     try {
-      final rootDir = Directory(directoryPath);
+      final dir = Directory(directoryPath);
+      if (!await dir.exists()) return;
 
-      await for (var entity in rootDir.list(recursive: false)) {
-        if (entity is File) {
-          if (entity.path.toLowerCase().endsWith('.pdf')) {
-            pdfFiles.add(entity);
-          }
+      await for (var entity in dir.list(recursive: true, followLinks: false)) {
+        if (entity is File && entity.path.toLowerCase().endsWith('.pdf')) {
+          pdfFiles.add(entity);
         } else if (entity is Directory) {
           // Skip restricted folders
           String folderName = entity.path.split('/').last.toLowerCase();
-          if (folderName != 'android' &&
-              folderName != 'data' &&
-              folderName != 'obb') {
-            await _getFiles(entity.path);
+          if (folderName == "android" ||
+              folderName == "obb" ||
+              folderName == "data") {
+            continue;
           }
         }
       }
@@ -119,21 +112,21 @@ class _PdfScreenState extends State<PdfScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF2b2b2b),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Colors.white))
           : permissionDenied
           ? Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    "Storage permission is required to find PDF files",
+                    "All Files Access is required to find PDF files",
                     style: TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: _checkPermissionAndLoadPdfs,
-                    child: const Text("Grant Permission"),
+                    child: const Text("Open Settings"),
                   ),
                 ],
               ),
@@ -165,7 +158,7 @@ class _PdfScreenState extends State<PdfScreen> {
                       style: const TextStyle(color: Colors.grey),
                     ),
                     onTap: () {
-                      // PDF open karne ka code yaha add karo
+                      // TODO: Open PDF file
                     },
                   );
                 },
